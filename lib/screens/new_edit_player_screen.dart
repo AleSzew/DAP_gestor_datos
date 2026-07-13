@@ -40,9 +40,12 @@ class NewEditPlayerScreen extends ConsumerWidget {
                   image: imageController.text,
                 );
 
-                ref.read(playerProvider.notifier).state;{
-                 newPlayer;
-                }
+               
+                ref.read(playerProvider.notifier).update((state) {
+                  return [...state, newPlayer];  //crea una lista nueva ponele el state y ademas el newPlayer
+                });
+
+                
                 context.pop();
               },
               child: const Text('Guardar'),

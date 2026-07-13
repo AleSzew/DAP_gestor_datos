@@ -1,67 +1,77 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '/entities/player.dart';
+import '../entities/player.dart';
+import '../provider/player_provider.dart';
 
-class DetailScreen extends StatelessWidget {
-   Player player;
-   DetailScreen({
+class DetailScreen extends ConsumerWidget {
+  final Player player;
+  
+  const DetailScreen({
     super.key,
     required this.player,
   });
 
   @override
-  Widget build(BuildContext context) {
-
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-
       appBar: AppBar(
         title: Text(player.name),
       ),
-
       body: Center(
-
         child: Padding(
           padding: const EdgeInsets.all(18.0),
           child: Column(
-          
             mainAxisAlignment: MainAxisAlignment.center,
-          
             children: [
-          
               Image.network(
                 player.image,
-                width: 250,
+                width: 150,
               ),
-          
-              SizedBox(height: 20),
-          
+              const SizedBox(height: 20),
               Text(
                 player.name,
-                style: TextStyle(fontSize: 25),
+                style: const TextStyle(fontSize: 25),
               ),
-          
-              SizedBox(height: 20),
-                
+              const SizedBox(height: 20),
               Text(player.description),
+              const SizedBox(height: 20),
+              
+              // Botón Editar (Lleva los datos cargados)
               ElevatedButton(
-              onPressed: () {
-              context.push('/new_edit_players');
-              },
-              child: const Text("Editar"),
-            ),
-            ElevatedButton(
-            onPressed: () {
-            context.push('/new_edit_players');
-             },
-            child: const Text("Eliminar"),
-            )
+                onPressed: () {
+                  context.push('/new_edit_players', extra: player);
+                },
+                child: const Text("Editar"),
+              ),
+              
+              const SizedBox(height: 10),
+              
+              // Botón Eliminar NUEVO y FÁCIL
+              ElevatedButton(
+                onPressed: () {
+                  // 1. Traemos la lista del provider
+                  List<Player> listaActual = ref.read(playerProvider);
+                  
+                  // 2. Creamos una copia modificable
+                  List<Player> listaNueva = List.from(listaActual);
+                  
+                  // 3. Sacamos al jugador con el método clásico de Dart
+                  listaNueva.remove(player);
+                  
+                  // 4. Guardamos los cambios en el provider usando el .state
+                  ref.read(playerProvider.notifier).state = listaNueva;
+                  
+                  // 5. Nos vamos a la lista
+                  context.pop();
+                },
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade100),
+                child: const Text("Eliminar", style: TextStyle(color: Colors.red)),
+              )
             ],
-            
           ),
         ),
-
       ),
-
     );
   }
 }
