@@ -47,7 +47,7 @@ class DetailScreen extends ConsumerWidget {
               
               const SizedBox(height: 10),
               
-              // Botón Eliminar NUEVO y FÁCIL
+              // Botón Eliminar 
               ElevatedButton(
                 onPressed: () {
                   // 1. Traemos la lista del provider
@@ -56,7 +56,7 @@ class DetailScreen extends ConsumerWidget {
                   // 2. Creamos una copia modificable
                   List<Player> listaNueva = List.from(listaActual);
                   
-                  // 3. Sacamos al jugador con el método clásico de Dart
+                  // 3. Sacamos al jugador de la lista
                   listaNueva.remove(player);
                   
                   // 4. Guardamos los cambios en el provider usando el .state
@@ -66,8 +66,7 @@ class DetailScreen extends ConsumerWidget {
                   context.pop();
                 },
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade100),
-                child: const Text("Eliminar", style: TextStyle(color: Colors.red)),
-              )
+                child: const Text("Eliminar")),
             ],
           ),
         ),

@@ -7,7 +7,7 @@ import '../screens/new_edit_player_screen.dart';
 
 final appRouter = GoRouter(
 
-  initialLocation: '/login',
+  initialLocation: '/players',
 
   routes: [
 
@@ -23,17 +23,15 @@ final appRouter = GoRouter(
 
     GoRoute(
       path: '/detail',
-      builder: (context, state) {
-        Player player = state.extra as Player;
-        return DetailScreen(
-          player: player,
-        );
-
-      },
+      builder: (context, state)  => DetailScreen(
+        player: state.extra as Player,
+      ),
     ),
     GoRoute(
       path: '/new_edit_players',
-      builder: (context, state) => NewEditPlayerScreen(),
+      builder: (context, state) => NewEditPlayerScreen(
+        player: state.extra as Player?,
+      ),
     ),
   ],
 

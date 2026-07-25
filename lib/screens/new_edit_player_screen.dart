@@ -5,16 +5,29 @@ import '../entities/player.dart';
 import '../provider/player_provider.dart';
 
 class NewEditPlayerScreen extends ConsumerWidget {
-  NewEditPlayerScreen({super.key});
+  // Recibimos el jugador. Puede ser null (si venimos del botón agregar)
+  final Player? player;
 
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController descController = TextEditingController();
-  final TextEditingController imageController = TextEditingController();
+  const NewEditPlayerScreen({super.key, this.player});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Si player no es null, ponemos sus datos. Si es null, lo dejamos vacío ('').
+    final TextEditingController nameController = TextEditingController(
+      text: player != null ? player!.name : '',
+    );
+    final TextEditingController descController = TextEditingController(
+      text: player != null ? player!.description : '',
+    );
+    final TextEditingController imageController = TextEditingController(
+      text: player != null ? player!.image : '',
+    );
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Nuevo Jugador')),
+      appBar: AppBar(
+        // Cambiamos el título dependiendo de si es null o no
+        title: Text(player == null ? 'Nuevo Jugador' : 'Editar Jugador'),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -34,21 +47,31 @@ class NewEditPlayerScreen extends ConsumerWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
+                // Creamos el objeto con lo que haya en los campos de texto
                 final newPlayer = Player(
                   name: nameController.text,
                   description: descController.text,
                   image: imageController.text,
                 );
 
-               
-                ref.read(playerProvider.notifier).update((state) {
-                  return [...state, newPlayer];  //crea una lista nueva ponele el state y ademas el newPlayer
-                });
-
-                
-                context.pop();
+                // Tu lógica de IF / ELSE
+                if (player == null) {
+                  // --- ESTAMOS AGREGANDO ---
+                  ref.read(playerProvider.notifier).update((state) {
+                    return [...state, newPlayer];
+                  });
+                  context.pop(); // Volvemos a la lista
+                } else {
+                  // --- ESTAMOS EDITANDO ---
+                  ref.read(playerProvider.notifier).update((state) {
+                    // Reemplazamos el viejo por el nuevo
+                    return state.map((p) => p == player ? newPlayer : p).toList();
+                  });
+                  context.go('/players'); // Volvemos directo a la pantalla principal
+                }
               },
-              child: const Text('Guardar'),
+              // Cambiamos el texto del botón
+              child: Text(player == null ? 'Guardar' : 'Actualizar'), //si no hay jugador, es guardar, si hay jugador, es actualizar
             )
           ],
         ),
