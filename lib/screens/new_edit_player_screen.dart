@@ -12,16 +12,16 @@ class NewEditPlayerScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Si player no es null, ponemos sus datos. Si es null, lo dejamos vacío ('').
-    final TextEditingController nameController = TextEditingController(
-      text: player != null ? player!.name : '',
-    );
-    final TextEditingController descController = TextEditingController(
-      text: player != null ? player!.description : '',
-    );
-    final TextEditingController imageController = TextEditingController(
-      text: player != null ? player!.image : '',
-    );
+  // Si player existe, saca la propiedad; si es null, usa ''
+  final TextEditingController nameController = TextEditingController(
+    text: player?.name ?? '',
+  );
+  final TextEditingController descController = TextEditingController(
+    text: player?.description ?? '',
+  );
+  final TextEditingController imageController = TextEditingController(
+    text: player?.image ?? '',
+  );
 
     return Scaffold(
       appBar: AppBar(
@@ -54,18 +54,18 @@ class NewEditPlayerScreen extends ConsumerWidget {
                   image: imageController.text,
                 );
 
-                // Tu lógica de IF / ELSE
+                
                 if (player == null) {
                   // --- ESTAMOS AGREGANDO ---
                   ref.read(playerProvider.notifier).update((state) {
-                    return [...state, newPlayer];
+                    return [...state, newPlayer];  //copia el state y le agrega el nuevo jugador
                   });
                   context.pop(); // Volvemos a la lista
                 } else {
                   // --- ESTAMOS EDITANDO ---
                   ref.read(playerProvider.notifier).update((state) {
                     // Reemplazamos el viejo por el nuevo
-                    return state.map((p) => p == player ? newPlayer : p).toList();
+                    return state.map((p) => p == player ? newPlayer : p).toList(); //si el jugador es el mismo que estamos editando(p == player), lo reemplazamos por el nuevo(new player), si no, lo dejamos igual(p)
                   });
                   context.go('/players'); // Volvemos directo a la pantalla principal
                 }
